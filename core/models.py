@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from .manager import MyAccountManager
+from .fields import EncryptedCharField
 
 SUPPORTED_LANGUAGES = [
     ('en', 'English'),
@@ -69,7 +70,22 @@ class SiteConfiguration(models.Model):
     site_logo = models.ImageField(upload_to='site/')
     favicon = models.ImageField(upload_to='site/')
     default_language = models.CharField(max_length=50, choices=SUPPORTED_LANGUAGES, default='en')
+
+    # Email Site Settings
+    smtp_host_user = EncryptedCharField(max_length=255, null=True, blank=True)
+    smtp_host_password = EncryptedCharField(max_length=255, null=True, blank=True)
+
+    # Set up email notifications for staff.
     email_notifications = models.ManyToManyField(Account, blank=True)
+
+    def save(self, *args, **kwargs):
+        # Encrypt the SMTP host user and password
+        if self.smtp_host_user:
+            self.smtp_host_user = EncryptedCharField.encrypt(self.smtp_host_user)
+        if self.smtp_host_password:
+            self.smtp_host_password = EncryptedCharField.encrypt(self.smtp_host_password)
+        
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.site_name
