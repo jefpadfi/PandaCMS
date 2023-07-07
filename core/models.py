@@ -2,7 +2,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from .manager import MyAccountManager
 
-
+SUPPORTED_LANGUAGES = [
+    ('en', 'English'),
+    # TODO: Add in more supported languages once we have a bases for english created.
+]
 
 class Role(models.Model):
     name = models.CharField('Name', max_length=255)
@@ -10,7 +13,6 @@ class Role(models.Model):
 
     def __str__(self):
         return self.name
-
 
 class Permission(models.Model):
     name = models.CharField('Name', max_length=255)
@@ -43,7 +45,6 @@ class Account(AbstractBaseUser, PermissionsMixin):
     def get_short_name(self):
         return self.first_name
 
-
 class AccountProfile(models.Model):
     account = models.OneToOneField(Account, on_delete=models.CASCADE, related_name='profile')
     avatar = models.ImageField('Profile Avatar', upload_to='profile_avatars/')
@@ -61,3 +62,71 @@ class AccountProfile(models.Model):
 
     def get_last_name(self):
         return self.account.last_name
+    
+class SiteConfiguration(models.Model):
+    site_name = models.CharField(max_length=255, default="PandaCMS")
+    site_slogan = models.CharField(max_length=255, default="A Panda in Every CMS!")
+    site_logo = models.ImageField(upload_to='site/')
+    favicon = models.ImageField(upload_to='site/')
+    default_language = models.CharField(max_length=50, choices=SUPPORTED_LANGUAGES, default='en')
+    email_notifications = models.ManyToManyField(Account, blank=True)
+
+    def __str__(self):
+        return self.site_name
+    
+    def get_favicon(self):
+        return self.favicon
+    
+    def get_slogan(self):
+        return self.site_slogan
+    
+    def get_name(self):
+        return self.site_name
+
+class Image(models.Model):
+    image = models.ImageField(upload_to='images/')
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    width = models.IntegerField()
+    height = models.IntegerField()
+    size = models.PositiveIntegerField()
+    uploaded_by = models.ForeignKey(Account, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
+    
+class Video(models.Model):
+    video = models.FileField(upload_to='videos/')
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    resolution_width = models.IntegerField()
+    resolution_height = models.IntegerField()
+    size = models.PositiveIntegerField()
+    uploaded_by = models.ForeignKey(Account, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
+    
+class Audio(models.Model):
+    audio = models.FileField(upload_to='audio/')
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    quality = models.CharField(max_length=100)
+    uploaded_by = models.ForeignKey(Account, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
+    
+class Document(models.Model):
+    document = models.FileField(upload_to='documents/')
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    size = models.PositiveIntegerField()
+    uploaded_by = models.ForeignKey(Account, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
