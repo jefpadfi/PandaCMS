@@ -8,14 +8,14 @@ SUPPORTED_LANGUAGES = [
     # TODO: Add in more supported languages once we have a bases for english created.
 ]
 
-class Role(models.Model):
+class UserRole(models.Model):
     name = models.CharField('Name', max_length=255)
     description = models.TextField('Description')
 
     def __str__(self):
         return self.name
 
-class Permission(models.Model):
+class UserPermission(models.Model):
     name = models.CharField('Name', max_length=255)
     codename = models.CharField('Codename', max_length=100, unique=True)
     description = models.TextField('Description')
@@ -23,14 +23,14 @@ class Permission(models.Model):
     def __str__(self):
         return self.name
 
-class Account(AbstractBaseUser, PermissionsMixin):
+class UserAccount(AbstractBaseUser):
     email = models.EmailField('Email Address', max_length=60, unique=True)
     first_name = models.CharField('First Name', max_length=255)
     last_name = models.CharField('Last Name', max_length=255)
     date_joined = models.DateTimeField('Date Joined', auto_now_add=True)
     is_active = models.BooleanField('Active', default=True)    
-    roles = models.ManyToManyField(Role, blank=True)
-    permissions = models.ManyToManyField(Permission, blank=True)
+    user_roles = models.ManyToManyField(UserRole, blank=True)
+    user_permissions = models.ManyToManyField(UserPermission, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
@@ -47,7 +47,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
         return self.first_name
 
 class AccountProfile(models.Model):
-    account = models.OneToOneField(Account, on_delete=models.CASCADE, related_name='profile')
+    account = models.OneToOneField(UserAccount, on_delete=models.CASCADE, related_name='profile')
     avatar = models.ImageField('Profile Avatar', upload_to='profile_avatars/')
     newsletter = models.BooleanField('Email Subscription for Site News', default=True)
     account_notes = models.TextField('Admin Notes on User', null=True, blank=True)
@@ -76,7 +76,7 @@ class SiteConfiguration(models.Model):
     smtp_host_password = EncryptedCharField(max_length=255, null=True, blank=True)
 
     # Set up email notifications for staff.
-    email_notifications = models.ManyToManyField(Account, blank=True)
+    email_notifications = models.ManyToManyField(UserAccount, blank=True)
 
     def save(self, *args, **kwargs):
         # Encrypt the SMTP host user and password
@@ -107,7 +107,7 @@ class Image(models.Model):
     width = models.IntegerField()
     height = models.IntegerField()
     size = models.PositiveIntegerField()
-    uploaded_by = models.ForeignKey(Account, on_delete=models.CASCADE)
+    uploaded_by = models.ForeignKey(UserAccount, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
@@ -120,7 +120,7 @@ class Video(models.Model):
     resolution_width = models.IntegerField()
     resolution_height = models.IntegerField()
     size = models.PositiveIntegerField()
-    uploaded_by = models.ForeignKey(Account, on_delete=models.CASCADE)
+    uploaded_by = models.ForeignKey(UserAccount, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
@@ -131,7 +131,7 @@ class Audio(models.Model):
     description = models.TextField(blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     quality = models.CharField(max_length=100)
-    uploaded_by = models.ForeignKey(Account, on_delete=models.CASCADE)
+    uploaded_by = models.ForeignKey(UserAccount, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
@@ -142,7 +142,7 @@ class Document(models.Model):
     description = models.TextField(blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     size = models.PositiveIntegerField()
-    uploaded_by = models.ForeignKey(Account, on_delete=models.CASCADE)
+    uploaded_by = models.ForeignKey(UserAccount, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title

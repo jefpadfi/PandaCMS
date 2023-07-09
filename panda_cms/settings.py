@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from cryptography.fernet import Fernet
 import environ
+import os
 
 env = environ.Env(
     DEBUG=(bool, False)
@@ -34,10 +35,11 @@ SECRET_KEY = env('SECRET_KEY')
 CIPHER_SUITE = env("ENCRYPTION_KEY")  # Create a cipher suite using the encryption key
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env['DEBUG']
+DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = []
 
+UTH_USER_MODEL = 'core.UserAccount'
 
 # Application definition
 
@@ -48,6 +50,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'core',
+    'pages',
+    'media',
+    'blog',
 ]
 
 MIDDLEWARE = [
@@ -127,6 +133,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
