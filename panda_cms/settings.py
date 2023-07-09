@@ -11,19 +11,30 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from cryptography.fernet import Fernet
+import environ
+
+env = environ.Env(
+    DEBUG=(bool, False)
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Read the enviroment variables from the file
+environ.Env.read_env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-9d*f(6l!x_edcv8t^s72%!wv9$@md^lvi!g7uu8v!^^2wb_92d'
+SECRET_KEY = env('SECRET_KEY')
+
+# Below is encryption for our EncryptedCharField for models to store encrypted data.
+CIPHER_SUITE = env("ENCRYPTION_KEY")  # Create a cipher suite using the encryption key
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env['DEBUG']
 
 ALLOWED_HOSTS = []
 
@@ -121,3 +132,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Add in Default SMTP Email System here. We will hadd email host and email host password when we call to send the email.
