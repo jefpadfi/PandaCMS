@@ -1,0 +1,102 @@
+body {
+    padding-top: 70px;
+}
+
+.navbar {
+    background-color: #333;
+    border-color: #222;
+}
+
+.navbar-brand {
+    color: #fff;
+}
+
+.navbar-brand:hover,
+.navbar-brand:focus {
+    color: #fff;
+}
+
+.navbar-nav > li > a {
+    color: #fff;
+}
+
+.navbar-nav > li > a:hover,
+.navbar-nav > li > a:focus {
+    color: #fff;
+    background-color: transparent;
+}
+
+.navbar-toggler {
+    border: none; /* Remove border */
+    background-color: transparent; /* Set background to transparent */
+    padding: 0; /* Remove default padding */
+}
+
+.navbar-toggler-icon {
+    background-color: #fff; /* Set color for the hamburger icon */
+}
+
+.navbar-collapse,
+.navbar-form {
+    border-color: #101010;
+}
+
+.nav-link.active,
+.nav-link:hover,
+.nav-link:focus {
+    color: #fff;
+    background-color: #101010;
+}
+
+.slider-container {
+    max-width:100%; /* Set max-width to 75% of the page */
+    margin: auto; /* Center the slider container */
+    overflow: hidden;
+    margin-bottom: 20px; /* Add margin-bottom to create space between the slider and content */
+    z-index: -1; /* Set a negative z-index to push the slider behind the content */
+}
+
+.carousel-inner {
+    height: 100%; /* Set height to 100% for the carousel items */
+}
+
+.carousel-item img,
+.carousel-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.left-sidebar {
+    background-color: #f5f5f5;
+    padding: 20px;
+}
+
+.sidebar-menu {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 10px;
+}
+
+.sidebar-menu li a {
+    text-decoration: none;
+    color: #333;
+}
+
+.content-container {
+    margin-top: 20px;
+}
+
+@media (max-width: 991.98px) {
+    .slider-container {
+        margin-bottom: 0; /* Reset margin-bottom for smaller screens to prevent overlap */
+    }
+
+    .navbar-nav > li:not(:last-child) > a {
+        border-bottom: 1px solid #fff; /* Add bottom border to each navigation link except the last one */
+    }
+}
